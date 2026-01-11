@@ -186,46 +186,57 @@ const DitheringApp = () => {
     const fileInputRef = useRef(null);
     const textureInputRef = useRef(null);
     const requestRef = useRef();
-
+    
+    // This combined useEffect handles initial loading and the main render loop.
     useEffect(() => {
+        // --- 1. Initial image loading ---
         const loadImage = (path, setter) => {
             const img = new Image();
             img.src = path;
-            img.onload = () => {
-                setter({ type: 'image', element: img });
-            };
+            img.onload = () => setter({ type: 'image', element: img });
             img.onerror = () => {
-                console.warn(`Could not load image from ${path}. Waiting for user upload.`);
+                console.warn(`Could not load default image from ${path}. Waiting for user upload.`);
                 setter(null);
             };
         };
+        
+        let isInitialLoad = source === null;
+        if (isInitialLoad) {
+            loadImage('images/default_image.png', setSource);
+            loadImage('images/default_texture.png', setTexture);
+        }
 
-        if (!source) loadImage('images/default_image.png', setSource);
-        if (!texture) loadImage('images/default_texture.png', setTexture);
-
-    }, []);
-
-    useEffect(() => {
-        const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString()), 1000);
-        return () => clearInterval(timer);
-    }, []);
-
-    useEffect(() => {
+        // --- 2. Main render loop ---
         const animate = () => {
             if (source?.type === 'video' && isPlaying) {
                 processFrame();
                 requestRef.current = requestAnimationFrame(animate);
             }
         };
+
         if (source?.type === 'video' && isPlaying) {
             requestRef.current = requestAnimationFrame(animate);
-        } else {
+        } else if (source) { // Only process frame if source is not null
             processFrame();
         }
-        return () => cancelAnimationFrame(requestRef.current);
+
+        return () => {
+            if (requestRef.current) {
+                cancelAnimationFrame(requestRef.current);
+            }
+        };
+
     }, [source, isPlaying, algorithm, blendMode, brightness, contrast, pixelSize, edgeStrength, textureIntensity, textureInvert, oklchDark, oklchMid, oklchLight, texture]);
+
+
+    // Timer for the clock - separated for clarity and to avoid re-running on every render dependency change.
+    useEffect(() => {
+        const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString()), 1000);
+        return () => clearInterval(timer);
+    }, []);
     
 
+    // Matrices
     const bayerMatrix = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]].map(row => row.map(v => (v / 16) * 255));
     const blueNoiseMatrix = [
         [128, 48, 168, 88, 131, 51, 171, 91, 129, 49, 169, 89, 132, 52, 172, 92],
@@ -259,7 +270,7 @@ const DitheringApp = () => {
             const texCanvas = document.createElement('canvas');
             texCanvas.width = width; texCanvas.height = height;
             const texCtx = texCanvas.getContext('2d');
-            texCtx.drawImage(texture, 0, 0, width, height);
+            texCtx.drawImage(texture.element, 0, 0, width, height);
             texData = texCtx.getImageData(0, 0, width, height).data;
         }
         const rgbDark = oklchToRgb(oklchDark.l, oklchDark.c, oklchDark.h);
@@ -389,7 +400,6 @@ const DitheringApp = () => {
         setContrast(2.0);
         setBrightness(-10);
         setEdgeStrength(7);
-        // Apply user-defined default OKLCH colors
         setOklchDark({ l: 0.05, c: 0, h: 0 });
         setOklchMid({ l: 0.35, c: 0.066, h: 204 });
         setOklchLight({ l: 0.47, c: 0.100, h: 60 });
