@@ -127,32 +127,46 @@ const AssetUploader = ({ label, icon, active, onClick }) => (
 
 // --- INTRO SCREEN COMPONENT ---
 const IntroScreen = ({ onEnter }) => {
-    const introBgStyle = {
-        backgroundImage: `url('images/intro_bg.png')`,
-        backgroundSize: 'contain',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+    const gradientBgStyle = {
+        background: 'linear-gradient(to right, rgba(29, 32, 33, 0), rgba(215, 153, 33, 0.15) 30%, rgba(215, 153, 33, 0.15) 70%, rgba(29, 32, 33, 0))' // Fades from transparent to yellow then back to transparent
+    };
+
+    const bloomImgStyle = {
+        filter: 'drop-shadow(0 0 30px rgba(215, 153, 33, 0.7))', // Stronger bloom
+        WebkitFilter: 'drop-shadow(0 0 30px rgba(215, 153, 33, 0.7))',
+        height: '100%', // Fill vertical space
+        width: 'auto',   // Adjust width proportionally
+        objectFit: 'contain', // Ensure entire image is visible, no cropping
+        objectPosition: 'center', // Center the image within its available space
     };
 
     return (
-        <div className="h-full w-full flex items-center justify-center p-gap" style={introBgStyle}>
-            <div className="w-full max-w-2xl flex flex-col items-center justify-center text-center">
+        <div className="h-full w-full relative flex items-center justify-center p-gap" style={gradientBgStyle}>
+            {/* Image Layer - fills the background, with bloom */}
+            <div className="absolute inset-0 flex items-center justify-center">
+                 <img 
+                    src="images/intro_bg.png" 
+                    style={bloomImgStyle} 
+                    className="" // Removed w-full h-full object-cover, now handled by style and flex parent
+                    onError={(e) => { e.target.style.display = 'none'; }} 
+                 />
+            </div>
+
+            {/* Pane Layer - absolutely centered on top */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-full max-w-2xl text-center">
                 <Pane title="[System Boot]" className="w-full">
-                    <div className="flex flex-col items-center justify-center p-8 space-y-6 bg-gruv-bg bg-opacity-70 backdrop-blur-sm">
-                        <h1 className="text-3xl font-bold text-gruv-yellow tracking-widest flex items-center gap-4">
-                            <Monitor size={32} /> Obra Dinn Dithering Lab
+                    <div className="flex flex-col items-center justify-center p-6 bg-gruv-surface">
+                        <h1 className="text-2xl font-bold text-gruv-yellow tracking-widest">
+                            Obra Dinn Dithering Lab
                         </h1>
-                        <p className="text-gruv-text max-w-md leading-relaxed">
-                            A real-time video and image dithering tool inspired by the 1-bit aesthetic of 'Return of the Obra Dinn'. Upload your media, tweak parameters, and export the result.
+                        <p className="text-gruv-gray max-w-md leading-relaxed mt-2 text-sm">
+                            A real-time dithering tool inspired by 1-bit retro aesthetics.
                         </p>
                         <div className="w-full max-w-xs pt-4">
                              <TerminalButton onClick={onEnter} variant="primary">
                                 <LogIn size={14} /> Enter Lab
                             </TerminalButton>
                         </div>
-                         <p className="text-xs text-gruv-gray pt-6">
-                           Built with React, TailwindCSS, and a bit of pixel magic.
-                        </p>
                     </div>
                 </Pane>
             </div>
@@ -186,10 +200,8 @@ const DitheringApp = () => {
     const fileInputRef = useRef(null);
     const textureInputRef = useRef(null);
     const requestRef = useRef();
-    
-    // This combined useEffect handles initial loading and the main render loop.
+
     useEffect(() => {
-        // --- 1. Initial image loading ---
         const loadImage = (path, setter) => {
             const img = new Image();
             img.src = path;
@@ -206,7 +218,14 @@ const DitheringApp = () => {
             loadImage('images/default_texture.png', setTexture);
         }
 
-        // --- 2. Main render loop ---
+    }, [source]);
+
+    useEffect(() => {
+        const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString()), 1000);
+        return () => clearInterval(timer);
+    }, []);
+
+    useEffect(() => {
         const animate = () => {
             if (source?.type === 'video' && isPlaying) {
                 processFrame();
@@ -216,7 +235,7 @@ const DitheringApp = () => {
 
         if (source?.type === 'video' && isPlaying) {
             requestRef.current = requestAnimationFrame(animate);
-        } else if (source) { // Only process frame if source is not null
+        } else if (source) {
             processFrame();
         }
 
@@ -227,16 +246,8 @@ const DitheringApp = () => {
         };
 
     }, [source, isPlaying, algorithm, blendMode, brightness, contrast, pixelSize, edgeStrength, textureIntensity, textureInvert, oklchDark, oklchMid, oklchLight, texture]);
-
-
-    // Timer for the clock - separated for clarity and to avoid re-running on every render dependency change.
-    useEffect(() => {
-        const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString()), 1000);
-        return () => clearInterval(timer);
-    }, []);
     
 
-    // Matrices
     const bayerMatrix = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]].map(row => row.map(v => (v / 16) * 255));
     const blueNoiseMatrix = [
         [128, 48, 168, 88, 131, 51, 171, 91, 129, 49, 169, 89, 132, 52, 172, 92],
@@ -266,7 +277,7 @@ const DitheringApp = () => {
         const imageData = ctx.getImageData(0, 0, width, height);
         const data = imageData.data;
         let texData = null;
-        if (texture) {
+        if (texture && texture.element) {
             const texCanvas = document.createElement('canvas');
             texCanvas.width = width; texCanvas.height = height;
             const texCtx = texCanvas.getContext('2d');
