@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obra Dinn Dithering Lab - TUI World</title>
+
+    <!-- Google Fonts: JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS with Gruvbox Config -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gruv: {
+                            bg: '#1d2021',       // Dark Hard
+                            surface: '#282828',  // Dark
+                            border: '#928374',   // Gray
+                            text: '#ebdbb2',     // Light
+                            red: '#cc241d',
+                            green: '#98971a',
+                            yellow: '#d79921',
+                            blue: '#458588',
+                            purple: '#b16286',
+                            aqua: '#689d6a',
+                            orange: '#d65d0e',
+                            gray: '#a89984',
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    spacing: {
+                        'gap': '8px', // Tiling gap
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="stylesheet" href="style.css">
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+</head>
+
+<body class="h-screen overflow-hidden flex flex-col p-gap bg-gruv-bg">
+    <div id="root" class="h-full w-full"></div>
+
+    <script type="text/babel" src="app.js"></script>
+</body>
+
+</html>
