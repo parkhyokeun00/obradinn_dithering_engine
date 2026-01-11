@@ -1,0 +1,7 @@
+name = "obradinn-dithering-engine"
+compatibility_date = "2026-01-11"
+
+# This configuration tells Cloudflare Pages where to find the static assets for your site.
+# 'dir' specifies the directory to upload. For this project, it's the root directory.
+[pages_build_output]
+dir = "."
