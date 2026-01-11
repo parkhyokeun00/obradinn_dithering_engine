@@ -24,6 +24,9 @@ const Scaling = (props) => <Icon {...props}><path d="M21 3 9 15"></path><path d=
 const Terminal = (props) => <Icon {...props}><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></Icon>;
 const Folder = (props) => <Icon {...props}><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></Icon>;
 const LogIn = (props) => <Icon {...props}><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></Icon>;
+const Book = (props) => <Icon {...props}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20v2H6.5A2.5 2.5 0 0 1 4 16.5v-11A2.5 2.5 0 0 1 6.5 3H20v2H6.5A2.5 2.5 0 0 1 4 3.5v11z"></path></Icon>;
+const LogOut = (props) => <Icon {...props}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></Icon>;
+
 
 // --- UTILITIES ---
 const oklchToRgb = (l, c, h) => {
@@ -85,7 +88,7 @@ const Pane = ({ children, title, className = "", noScroll = false }) => (
                 </div>
             </div>
         )}
-        <div className={`flex-1 p-4 ${!noScroll ? 'overflow-y-auto custom-scrollbar' : 'overflow-hidden'}`}>
+        <div className={`flex-1 ${!noScroll ? 'overflow-y-auto custom-scrollbar p-4' : 'overflow-hidden'}`}>
             {children}
         </div>
     </div>
@@ -172,9 +175,42 @@ const IntroScreen = ({ onEnter }) => {
     );
 };
 
+// --- DOCS PAGE COMPONENT ---
+const DocsPage = ({ onBack }) => {
+    const [markdown, setMarkdown] = useState('');
+
+    useEffect(() => {
+        fetch('docs/Technical_Analysis_of_1-bit_Art_Style_Innovation.md')
+            .then(res => res.text())
+            .then(text => setMarkdown(text))
+            .catch(err => setMarkdown(`# Error\nCould not load document. \n\n${err}`));
+    }, []);
+
+    return (
+        <div className="h-full flex flex-col gap-gap">
+            <header className="h-10 bg-gruv-surface border border-gruv-border flex justify-between items-center px-4 shrink-0 shadow-lg">
+                <div className="flex items-center gap-4">
+                    <span className="text-gruv-green font-bold flex items-center gap-2">
+                        <Terminal size={14} /> user@obradinn-lab:~$
+                    </span>
+                    <span className="text-gruv-gray text-xs hidden md:inline-block">man dithering</span>
+                </div>
+                 <TerminalButton onClick={onBack} variant="accent" className="w-auto py-1 px-4">
+                    <LogOut size={14} /> Back to Lab
+                </TerminalButton>
+            </header>
+            <main className="flex-1 flex gap-gap overflow-hidden">
+                <Pane title="~/docs/analysis.md" className="w-full">
+                    <pre className="text-sm text-gruv-text font-mono leading-relaxed whitespace-pre-wrap">{markdown}</pre>
+                </Pane>
+            </main>
+        </div>
+    );
+};
+
 
 // --- MAIN DITHERING APPLICATION COMPONENT ---
-const DitheringApp = () => {
+const DitheringApp = ({ onNavigate }) => {
     const [source, setSource] = useState(null);
     const [texture, setTexture] = useState(null);
     const [algorithm, setAlgorithm] = useState('bayer');
@@ -457,11 +493,14 @@ const DitheringApp = () => {
                     <span className="text-gruv-gray text-xs hidden md:inline-block">./init_dithering_engine.sh</span>
                 </div>
                 <div className="flex items-center gap-4 text-xs font-mono">
+                     <button onClick={() => onNavigate('docs')} className="text-gruv-purple hover:text-gruv-text transition-colors flex items-center gap-1">
+                        <Book size={14}/> <span className="underline">Docs</span>
+                    </button>
                     <span className="text-gruv-blue flex items-center gap-1">
                         <span className="w-2 h-2 rounded-full bg-gruv-blue animate-pulse"></span> ONLINE
                     </span>
                     <span className="text-gruv-text">{currentTime}</span>
-                    <button onClick={() => setShowInfo(!showInfo)} className="text-gruv-yellow hover:text-gruv-text transition-colors">
+                    <button onClick={() => setShowInfo(true)} className="text-gruv-yellow hover:text-gruv-text transition-colors">
                         <span className="underline">?</span> Help
                     </button>
                 </div>
@@ -472,83 +511,84 @@ const DitheringApp = () => {
 
                 {/* Sidebar Pane (20%) */}
                 <Pane title="~/config/controls/" className="w-[280px] shrink-0">
+                    <div className="p-4">
+                        {/* Asset Loader Block */}
+                        <div className="mb-6 space-y-3">
+                            <div className="text-xs font-bold text-gruv-gray uppercase tracking-widest mb-1 border-b border-gruv-border/30 pb-1">Sources</div>
+                            <div className="space-y-2">
+                                <AssetUploader label="SOURCE (IMG/MOV)" icon={<Video size={14} />} active={!!source} onClick={() => fileInputRef.current.click()} />
+                                <AssetUploader label="TEXTURE" icon={<Layers size={14} />} active={!!texture} onClick={() => textureInputRef.current.click()} />
+                                <input type="file" ref={fileInputRef} onChange={handleFileUpload} className="hidden" accept="image/*,video/*" />
+                                <input type="file" ref={textureInputRef} onChange={handleTextureUpload} className="hidden" accept="image/*" />
 
-                    {/* Asset Loader Block */}
-                    <div className="mb-6 space-y-3">
-                        <div className="text-xs font-bold text-gruv-gray uppercase tracking-widest mb-1 border-b border-gruv-border/30 pb-1">Sources</div>
-                        <div className="space-y-2">
-                            <AssetUploader label="SOURCE (IMG/MOV)" icon={<Video size={14} />} active={!!source} onClick={() => fileInputRef.current.click()} />
-                            <AssetUploader label="TEXTURE" icon={<Layers size={14} />} active={!!texture} onClick={() => textureInputRef.current.click()} />
-                            <input type="file" ref={fileInputRef} onChange={handleFileUpload} className="hidden" accept="image/*,video/*" />
-                            <input type="file" ref={textureInputRef} onChange={handleTextureUpload} className="hidden" accept="image/*" />
-
-                            {source?.type === 'video' && (
-                                <TerminalButton onClick={() => { setIsPlaying(!isPlaying); isPlaying ? source.element.pause() : source.element.play(); }} variant="accent">
-                                    {isPlaying ? <Pause size={12} /> : <Play size={12} />} {isPlaying ? 'PAUSE' : 'EXECUTE'}
-                                </TerminalButton>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Obra Dinn Preset */}
-                    <div className="mb-6">
-                        <TerminalButton onClick={setObraDinnMode} variant="primary">
-                            <Monitor size={14} /> LOAD OBRA_DINN.CFG
-                        </TerminalButton>
-                    </div>
-
-                    {/* Colors */}
-                    <div className="mb-6 space-y-3">
-                        <div className="text-xs font-bold text-gruv-gray uppercase tracking-widest mb-1 border-b border-gruv-border/30 pb-1">Colors (OKLCH)</div>
-                        <ColorPickerControl label="DARK_TONE" color={oklchDark} onChange={(hex) => handleColorChange(hex, setOklchDark)} />
-                        <ColorPickerControl label="MID_TONE" color={oklchMid} onChange={(hex) => handleColorChange(hex, setOklchMid)} />
-                        <ColorPickerControl label="LIGHT_TONE" color={oklchLight} onChange={(hex) => handleColorChange(hex, setOklchLight)} />
-                    </div>
-
-                    {/* Composite */}
-                    <div className="mb-6 space-y-3">
-                        <div className="text-xs font-bold text-gruv-gray uppercase tracking-widest mb-1 border-b border-gruv-border/30 pb-1">Composite</div>
-                        <div className="grid grid-cols-2 gap-1 bg-gruv-bg p-1 border border-gruv-border">
-                            {['multiply', 'screen', 'overlay', 'softlight', 'difference', 'dodge'].map(mode => (
-                                <button key={mode} onClick={() => setBlendMode(mode)} className={`py-1 text-[10px] font-bold uppercase transition-all ${blendMode === mode ? 'bg-gruv-blue text-gruv-bg' : 'text-gruv-gray hover:text-gruv-text'}`}>
-                                    {mode}
-                                </button>
-                            ))}
-                        </div>
-                        <TerminalButton onClick={() => setTextureInvert(!textureInvert)} className={`text-[10px] py-1 ${textureInvert ? 'bg-gruv-text text-gruv-bg' : ''}`}>
-                            <RotateCcw size={10} /> INVERT_TEXTURE
-                        </TerminalButton>
-                        <MiniSlider label="INTENSITY" value={textureIntensity} min={0} max={1} step={0.05} onChange={setTextureIntensity} />
-                    </div>
-
-                    {/* Filter */}
-                    <div className="mb-6 space-y-3">
-                        <div className="text-xs font-bold text-gruv-gray uppercase tracking-widest mb-1 border-b border-gruv-border/30 pb-1">Filters</div>
-                        <div className="grid grid-cols-2 gap-1 mb-2">
-                            {['threshold', 'bayer', 'blue-noise', 'floyd-steinberg'].map(algo => (
-                                <button key={algo} onClick={() => setAlgorithm(algo)} className={`py-1 px-1 text-[9px] font-bold border transition-all uppercase ${algorithm === algo ? 'border-gruv-yellow text-gruv-yellow' : 'border-gruv-border text-gruv-gray hover:border-gruv-text'}`}>
-                                    {algo.replace('-', '_')}
-                                </button>
-                            ))}
-                        </div>
-                        <MiniSlider label="EDGE_DET" value={edgeStrength} min={0} max={10} onChange={setEdgeStrength} />
-                        <MiniSlider label="RES_SCALE" value={pixelSize} min={1} max={4} step={0.5} onChange={setPixelSize} />
-                        <div className="grid grid-cols-2 gap-2">
-                            <MiniSlider label="BRIGHT" value={brightness} min={-100} max={100} onChange={setBrightness} />
-                            <MiniSlider label="CONTRAST" value={contrast} min={0.5} max={3} step={0.1} onChange={setContrast} />
-                        </div>
-                    </div>
-
-                    {/* Export */}
-                    <div className="space-y-2 pt-2 border-t border-gruv-border border-dashed">
-                        <button disabled={!source} onClick={handleScreenshotExport} className="w-full py-3 bg-gruv-green text-gruv-bg font-bold text-xs hover:bg-gruv-text transition-colors flex flex-col items-center gap-1 shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
-                            <div className="flex items-center gap-2">
-                                <Camera size={14} /> EXPORT_VISUAL
+                                {source?.type === 'video' && (
+                                    <TerminalButton onClick={() => { setIsPlaying(!isPlaying); isPlaying ? source.element.pause() : source.element.play(); }} variant="accent">
+                                        {isPlaying ? <Pause size={12} /> : <Play size={12} />} {isPlaying ? 'PAUSE' : 'EXECUTE'}
+                                    </TerminalButton>
+                                )}
                             </div>
-                        </button>
-                        <button disabled={!source} onClick={handleRawExport} className="w-full py-2 border border-gruv-border text-gruv-gray text-[10px] font-bold hover:bg-gruv-border hover:text-gruv-bg transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
-                                <FileOutput size={12} /> EXPORT_RAW_DATA
-                        </button>
+                        </div>
+
+                        {/* Obra Dinn Preset */}
+                        <div className="mb-6">
+                            <TerminalButton onClick={setObraDinnMode} variant="primary">
+                                <Monitor size={14} /> LOAD OBRA_DINN.CFG
+                            </TerminalButton>
+                        </div>
+
+                        {/* Colors */}
+                        <div className="mb-6 space-y-3">
+                            <div className="text-xs font-bold text-gruv-gray uppercase tracking-widest mb-1 border-b border-gruv-border/30 pb-1">Colors (OKLCH)</div>
+                            <ColorPickerControl label="DARK_TONE" color={oklchDark} onChange={(hex) => handleColorChange(hex, setOklchDark)} />
+                            <ColorPickerControl label="MID_TONE" color={oklchMid} onChange={(hex) => handleColorChange(hex, setOklchMid)} />
+                            <ColorPickerControl label="LIGHT_TONE" color={oklchLight} onChange={(hex) => handleColorChange(hex, setOklchLight)} />
+                        </div>
+
+                        {/* Composite */}
+                        <div className="mb-6 space-y-3">
+                            <div className="text-xs font-bold text-gruv-gray uppercase tracking-widest mb-1 border-b border-gruv-border/30 pb-1">Composite</div>
+                            <div className="grid grid-cols-2 gap-1 bg-gruv-bg p-1 border border-gruv-border">
+                                {['multiply', 'screen', 'overlay', 'softlight', 'difference', 'dodge'].map(mode => (
+                                    <button key={mode} onClick={() => setBlendMode(mode)} className={`py-1 text-[10px] font-bold uppercase transition-all ${blendMode === mode ? 'bg-gruv-blue text-gruv-bg' : 'text-gruv-gray hover:text-gruv-text'}`}>
+                                        {mode}
+                                    </button>
+                                ))}
+                            </div>
+                            <TerminalButton onClick={() => setTextureInvert(!textureInvert)} className={`text-[10px] py-1 ${textureInvert ? 'bg-gruv-text text-gruv-bg' : ''}`}>
+                                <RotateCcw size={10} /> INVERT_TEXTURE
+                            </TerminalButton>
+                            <MiniSlider label="INTENSITY" value={textureIntensity} min={0} max={1} step={0.05} onChange={setTextureIntensity} />
+                        </div>
+
+                        {/* Filter */}
+                        <div className="mb-6 space-y-3">
+                            <div className="text-xs font-bold text-gruv-gray uppercase tracking-widest mb-1 border-b border-gruv-border/30 pb-1">Filters</div>
+                            <div className="grid grid-cols-2 gap-1 mb-2">
+                                {['threshold', 'bayer', 'blue-noise', 'floyd-steinberg'].map(algo => (
+                                    <button key={algo} onClick={() => setAlgorithm(algo)} className={`py-1 px-1 text-[9px] font-bold border transition-all uppercase ${algorithm === algo ? 'border-gruv-yellow text-gruv-yellow' : 'border-gruv-border text-gruv-gray hover:border-gruv-text'}`}>
+                                        {algo.replace('-', '_')}
+                                    </button>
+                                ))}
+                            </div>
+                            <MiniSlider label="EDGE_DET" value={edgeStrength} min={0} max={10} onChange={setEdgeStrength} />
+                            <MiniSlider label="RES_SCALE" value={pixelSize} min={1} max={4} step={0.5} onChange={setPixelSize} />
+                            <div className="grid grid-cols-2 gap-2">
+                                <MiniSlider label="BRIGHT" value={brightness} min={-100} max={100} onChange={setBrightness} />
+                                <MiniSlider label="CONTRAST" value={contrast} min={0.5} max={3} step={0.1} onChange={setContrast} />
+                            </div>
+                        </div>
+
+                        {/* Export */}
+                        <div className="space-y-2 pt-2 border-t border-gruv-border border-dashed">
+                            <button disabled={!source} onClick={handleScreenshotExport} className="w-full py-3 bg-gruv-green text-gruv-bg font-bold text-xs hover:bg-gruv-text transition-colors flex flex-col items-center gap-1 shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+                                <div className="flex items-center gap-2">
+                                    <Camera size={14} /> EXPORT_VISUAL
+                                </div>
+                            </button>
+                            <button disabled={!source} onClick={handleRawExport} className="w-full py-2 border border-gruv-border text-gruv-gray text-[10px] font-bold hover:bg-gruv-border hover:text-gruv-bg transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+                                    <FileOutput size={12} /> EXPORT_RAW_DATA
+                            </button>
+                        </div>
                     </div>
                 </Pane>
 
@@ -584,15 +624,71 @@ const DitheringApp = () => {
                 </Pane>
             </main>
 
+            {/* AdSense Placeholder */}
+            <div className="h-16 bg-gruv-surface border border-gruv-border flex items-center justify-center text-gruv-gray text-xs">
+                [ Google AdSense Placeholder ]
+            </div>
+
             {/* Modal Info */}
-            {showInfo && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-8 bg-black/80 backdrop-blur-sm" onClick={() => setShowInfo(false)}>
-                    <div className="bg-gruv-bg border border-gruv-border w-full max-w-2xl shadow-2xl p-6" onClick={e => e.stopPropagation()}>
-                        <div className="flex justify-between items-center mb-6 border-b border-gruv-border pb-2">
-                            <h2 className="text-xl font-bold text-gruv-yellow flex items-center gap-2"><Info size={20} /> README.md</h2>
-                            <button onClick={() => setShowInfo(false)} className="text-gruv-red hover:text-gruv-text">[x]</button>
-                        </div>
-                        <div className="space-y-4 text-sm text-gruv-text font-mono leading-relaxed">
+            {showInfo && <HelpModal onClose={() => setShowInfo(false)} />}
+        </div>
+    );
+};
+
+const HelpModal = ({ onClose }) => {
+    const [activeTab, setActiveTab] = useState('readme');
+    const [howToUse, setHowToUse] = useState('Loading...');
+    const [fairUse, setFairUse] = useState('Loading...');
+
+    useEffect(() => {
+        fetch('docs/Technical_Analysis_of_1-bit_Art_Style_Innovation.md')
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                return res.text();
+            })
+            .then(text => {
+                const howToUseRegex = /##.*\(How to Use\)([\s\S]*?)---/m;
+                const fairUseRegex = /##.*\(Fair Use Doctrine\)([\s\S]*)/m;
+
+                const howToUseMatch = text.match(howToUseRegex);
+                const fairUseMatch = text.match(fairUseRegex);
+
+                setHowToUse(howToUseMatch ? howToUseMatch[1].trim() : 'Content not found.');
+                setFairUse(fairUseMatch ? fairUseMatch[1].trim() : 'Content not found.');
+            })
+            .catch(err => {
+                console.error("Failed to load or parse help content:", err);
+                setHowToUse('Error loading content. Please check the browser console for details.');
+                setFairUse('Error loading content. Please check the browser console for details.');
+            });
+    }, []);
+
+    const TabButton = ({ id, children }) => (
+        <button
+            onClick={() => setActiveTab(id)}
+            className={`px-4 py-2 text-xs font-bold uppercase transition-colors ${activeTab === id ? 'bg-gruv-bg text-gruv-yellow border-b-2 border-gruv-yellow' : 'text-gruv-gray hover:text-gruv-text'}`}
+        >
+            {children}
+        </button>
+    );
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-8 bg-black/80 backdrop-blur-sm" onClick={onClose}>
+            <div className="bg-gruv-bg border border-gruv-border w-full max-w-3xl shadow-2xl flex flex-col" onClick={e => e.stopPropagation()}>
+                <div className="flex justify-between items-center p-4 border-b border-gruv-border">
+                    <h2 className="text-xl font-bold text-gruv-yellow flex items-center gap-2"><Info size={20} /> Help System</h2>
+                    <button onClick={onClose} className="text-gruv-red hover:text-gruv-text">[x]</button>
+                </div>
+                <div className="border-b border-gruv-border flex">
+                    <TabButton id="readme">README.md</TabButton>
+                    <TabButton id="howToUse">How to Use</TabButton>
+                    <TabButton id="fairUse">Fair Use</TabButton>
+                </div>
+                <div className="p-6 space-y-4 text-sm text-gruv-text font-mono leading-relaxed overflow-y-auto h-[60vh] custom-scrollbar">
+                    {activeTab === 'readme' && (
+                        <>
                             <p><span className="text-gruv-blue"># Obra Dinn Dithering Lab</span></p>
                             <p>A technical demonstration of 1-bit dithering algorithms in a retro TUI environment.</p>
 
@@ -608,16 +704,19 @@ const DitheringApp = () => {
                                 <li><strong>Visual:</strong> Upscaled screenshot-style export (Recommended).</li>
                                 <li><strong>Raw:</strong> 1:1 pixel data export.</li>
                             </ul>
-                        </div>
-                        <div className="mt-6 pt-4 border-t border-gruv-border text-center text-xs text-gruv-gray">
-                            Press 'ESC' or click outside to close buffer.
-                        </div>
-                    </div>
+                        </>
+                    )}
+                    {activeTab === 'howToUse' && <pre className="whitespace-pre-wrap font-mono">{howToUse}</pre>}
+                    {activeTab === 'fairUse' && <pre className="whitespace-pre-wrap font-mono">{fairUse}</pre>}
                 </div>
-            )}
+                 <div className="p-3 border-t border-gruv-border text-center text-xs text-gruv-gray">
+                    Press 'ESC' or click outside to close buffer.
+                </div>
+            </div>
         </div>
     );
 };
+
 
 const ColorPickerControl = ({ label, color, onChange }) => {
     const rgb = oklchToRgb(color.l, color.c, color.h);
@@ -658,13 +757,20 @@ const MiniSlider = ({ label, value, min, max, step = 1, onChange }) => {
 
 // --- TOP-LEVEL APP COMPONENT ---
 const App = () => {
-    const [showApp, setShowApp] = useState(false);
+    const [currentPage, setCurrentPage] = useState('intro'); // 'intro', 'app', 'docs'
 
-    if (showApp) {
-        return <DitheringApp />;
-    } else {
-        return <IntroScreen onEnter={() => setShowApp(true)} />;
+    const handleNavigate = (page) => {
+        setCurrentPage(page);
+    };
+
+    if (currentPage === 'intro') {
+        return <IntroScreen onEnter={() => handleNavigate('app')} />;
+    } else if (currentPage === 'app') {
+        return <DitheringApp onNavigate={handleNavigate} />;
+    } else if (currentPage === 'docs') {
+        return <DocsPage onBack={() => handleNavigate('app')} />;
     }
+    return null;
 };
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

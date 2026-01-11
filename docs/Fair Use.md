@@ -1,0 +1,5 @@
+This project is a non-commercial, educational tool created for the purpose of research and study into the specific graphical techniques of the game "Return of the Obra Dinn". The use of any copyrighted material is done under the principles of "Fair Use" as described in the Copyright Act of 1976, 17 U.S.C. § 107.
+-   **Purpose and character of use:** This is a non-profit, educational project.
+-   **Nature of the copyrighted work:** The source material is a published, creative work. The analysis focuses on the technical aspects of its art style.
+-   **Amount and substantiality of the portion used:** The project uses screenshots and visual elements only to the extent necessary for technical analysis and demonstration.
+-   **Effect of the use upon the potential market for or value of the copyrighted work:** This project is not a substitute for the original game and is not intended to harm its market value. On the contrary, it aims to foster appreciation for the game's technical achievements.1
