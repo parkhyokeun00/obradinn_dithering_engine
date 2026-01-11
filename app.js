@@ -128,31 +128,29 @@ const AssetUploader = ({ label, icon, active, onClick }) => (
 // --- INTRO SCREEN COMPONENT ---
 const IntroScreen = ({ onEnter }) => {
     const gradientBgStyle = {
-        background: 'linear-gradient(to right, rgba(29, 32, 33, 0), rgba(215, 153, 33, 0.15) 30%, rgba(215, 153, 33, 0.15) 70%, rgba(29, 32, 33, 0))' // Fades from transparent to yellow then back to transparent
+        background: 'linear-gradient(to right, rgba(29, 32, 33, 0), rgba(215, 153, 33, 0.15) 30%, rgba(215, 153, 33, 0.15) 70%, rgba(29, 32, 33, 0))'
     };
 
     const bloomImgStyle = {
-        filter: 'drop-shadow(0 0 30px rgba(215, 153, 33, 0.7))', // Stronger bloom
+        filter: 'drop-shadow(0 0 30px rgba(215, 153, 33, 0.7))',
         WebkitFilter: 'drop-shadow(0 0 30px rgba(215, 153, 33, 0.7))',
-        height: '100%', // Fill vertical space
-        width: 'auto',   // Adjust width proportionally
-        objectFit: 'contain', // Ensure entire image is visible, no cropping
-        objectPosition: 'center', // Center the image within its available space
+        height: '100%',
+        width: 'auto',
+        objectFit: 'contain',
+        objectPosition: 'center',
     };
 
     return (
         <div className="h-full w-full relative flex items-center justify-center p-gap" style={gradientBgStyle}>
-            {/* Image Layer - fills the background, with bloom */}
+            
             <div className="absolute inset-0 flex items-center justify-center">
                  <img 
                     src="images/intro_bg.png" 
                     style={bloomImgStyle} 
-                    className="" // Removed w-full h-full object-cover, now handled by style and flex parent
                     onError={(e) => { e.target.style.display = 'none'; }} 
                  />
             </div>
 
-            {/* Pane Layer - absolutely centered on top */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-full max-w-2xl text-center">
                 <Pane title="[System Boot]" className="w-full">
                     <div className="flex flex-col items-center justify-center p-6 bg-gruv-surface">
@@ -401,7 +399,9 @@ const DitheringApp = () => {
         if (file) {
             const img = new Image();
             img.src = URL.createObjectURL(file);
-            img.onload = () => setTexture(img);
+            img.onload = () => {
+                setTexture({ type: 'image', element: img });
+            };
         }
     };
 
