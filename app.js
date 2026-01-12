@@ -144,32 +144,125 @@ const IntroScreen = ({ onEnter }) => {
     };
 
     return (
-        <div className="h-full w-full relative flex items-center justify-center p-gap" style={gradientBgStyle}>
-            
-            <div className="absolute inset-0 flex items-center justify-center">
-                 <img 
-                    src="images/intro_bg.png" 
-                    style={bloomImgStyle} 
-                    onError={(e) => { e.target.style.display = 'none'; }} 
-                 />
+        <div className="h-full w-full overflow-y-auto custom-scrollbar">
+            {/* Centered Content */}
+            <div className="h-full w-full relative flex items-center justify-center p-gap" style={gradientBgStyle}>
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <img
+                        src="images/intro_bg.png"
+                        style={bloomImgStyle}
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                </div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-full max-w-2xl text-center">
+                    <Pane title="[System Boot]" className="w-full">
+                        <div className="flex flex-col items-center justify-center p-6 bg-gruv-surface">
+                            <h1 className="text-2xl font-bold text-gruv-yellow tracking-widest">
+                                Obra Dinn Dithering Lab
+                            </h1>
+                            <p className="text-gruv-gray max-w-md leading-relaxed mt-2 text-sm">
+                                A real-time dithering tool inspired by 1-bit retro aesthetics.
+                            </p>
+                            <div className="w-full max-w-xs pt-4">
+                                <TerminalButton onClick={onEnter} variant="primary">
+                                    <LogIn size={14} /> Enter Lab
+                                </TerminalButton>
+                            </div>
+                        </div>
+                    </Pane>
+                </div>
             </div>
 
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-full max-w-2xl text-center">
-                <Pane title="[System Boot]" className="w-full">
-                    <div className="flex flex-col items-center justify-center p-6 bg-gruv-surface">
-                        <h1 className="text-2xl font-bold text-gruv-yellow tracking-widest">
-                            Obra Dinn Dithering Lab
-                        </h1>
-                        <p className="text-gruv-gray max-w-md leading-relaxed mt-2 text-sm">
-                            A real-time dithering tool inspired by 1-bit retro aesthetics.
-                        </p>
-                        <div className="w-full max-w-xs pt-4">
-                             <TerminalButton onClick={onEnter} variant="primary">
-                                <LogIn size={14} /> Enter Lab
-                            </TerminalButton>
-                        </div>
+            {/* Scrollable Content Below */}
+            <div className="bg-gruv-bg py-10 flex flex-col items-center">
+                {/* Technical Analysis Section */}
+                <div className="w-full max-w-4xl px-4 py-8 bg-gruv-surface border border-gruv-border shadow-lg">
+                    <h2 className="text-3xl font-bold text-gruv-yellow mb-6 border-b border-gruv-border pb-2">Technical Analysis of 1-bit Art Style Innovation</h2>
+                    <div className="text-sm text-gruv-text font-mono leading-relaxed space-y-4">
+                        <p>This is a fan-made educational tool analyzing the dithering techniques of 'Return of the Obra Dinn'. Not affiliated with Lucas Pope or 3909 LLC.</p>
+
+                        <h3 className="text-xl font-bold text-gruv-aqua mt-6">Return of the Obra Dinn: Analysis of Technical Innovations in 1-Bit Art Style</h3>
+                        <h4 className="text-lg font-bold text-gruv-orange mt-4">Executive Summary</h4>
+                        <p>The unique 1-bit art style of the game "Return of the Obra Dinn" is the product of immense effort and technical innovation by developer Lucas Pope. While seemingly simple black-and-white graphics, the visuals are a composite result of 3D modeling, a sophisticated rendering pipeline, and ingenious dithering techniques.</p>
+                        <p>The core technology, dithering, creates the illusion of depth and rich tones using only two colors (black and white). Pope maximized visual effects by strategically selecting different dithering algorithms—such as diffusion, Bayer, and blue noise—tailored to specific elements of the scene (characters, clothing, backgrounds, etc.).</p>
+                        <p>The most notable achievement was resolving the issue of dithering instability within a 3D environment. While traditional techniques caused visual distortion with a moving camera, Pope invested over 100 hours to develop a unique solution: mapping the dithering pattern onto a sphere surrounding the camera. This technology played a decisive role in preventing player motion sickness and providing an immersive experience. Furthermore, his open development process attracted the participation of external experts, which served as a catalyst for elevating the game's visual perfection to a higher level.</p>
+
+                        <h4 className="text-lg font-bold text-gruv-orange mt-4">1. Sophisticated 1-Bit Visuals Based on 3D</h4>
+                        <p>Every visual element in "Return of the Obra Dinn" was modeled fully in 3D using Maya and Unity, then converted into the final 1-bit image through complex shaders and rendering pipelines. This allows for the realization of dynamic scenes from multiple angles, going beyond static 2D images.</p>
+                        <p><strong className="text-gruv-green">Implementation of Dynamic Effects:</strong> Effects such as dust clouds from a strike or muzzle flashes were implemented using meticulously crafted 3D dust cloud models. This ensures that even though the resulting image is static, it conveys dynamism and a sense of motion when viewed from various angles.</p>
+                        <p><strong className="text-gruv-green">Obsession with Detail:</strong> Lucas Pope dedicated immense effort to details players might barely notice. For example, the ropes securing various objects on the ship were procedurally generated, and they were created as articulated 3D models that react to the movement of the sea, wind, and rain.</p>
+                        <p><strong className="text-gruv-green">Development Log:</strong> Pope documented his entire development process on the 'Tigsource' forums. These records offer a glimpse into his vision and his drive toward perfection.</p>
+
+                        <h4 className="text-lg font-bold text-gruv-orange mt-4">2. Dithering: The Core of 1-Bit Art</h4>
+                        <p>Dithering is a technique used to create the appearance of more colors or shades using a limited color palette (in this case, black and white). This technology was historically used on hardware like the Amstrad or Commodore 64 to create the illusion of rich colors with only 16 to 32 colors.</p>
+                        <p><strong className="text-gruv-green">Basic Principle:</strong> When converting a grayscale image to black and white, simply splitting black and white based on a specific brightness threshold results in a significant loss of detail. Dithering restores this lost sense of depth by selectively switching some dark pixels to white and some bright pixels to black.</p>
+                        <p><strong className="text-gruv-green">Effect:</strong> Using techniques like Bayer dithering creates the illusion of multiple shades of gray, despite actually using only black and white pixels.</p>
+
+                        <h4 className="text-lg font-bold text-gruv-orange mt-4">3. Strategic Use of Dithering Algorithms by Context</h4>
+                        <p>"Obra Dinn" does not use a single dithering technique. Instead, it carefully selects and applies the most suitable algorithm for each part of the scene to complete its unique visual style.</p>
+                        <p><strong className="text-gruv-green">Rendering Process:</strong></p>
+                        <ul className="list-disc pl-5 space-y-1 marker:text-gruv-gray">
+                            <li>Identify each surface of the 3D model.</li>
+                            <li>Apply lighting.</li>
+                            <li>Combine surface and lighting to generate the final effect. During this process, specific areas may be designated as pure black or white, or edge lines may be removed to enhance visual distinctiveness.</li>
+                        </ul>
+                        <p><strong className="text-gruv-green">Key Dithering Algorithms:</strong></p>
+                        <ul className="list-disc pl-5 space-y-1 marker:text-gruv-gray">
+                            <li><strong className="text-gruv-purple">Diffusion:</strong> Used for areas requiring smooth shading transitions, such as human faces.</li>
+                            <li><strong className="text-gruv-purple">Bayer:</strong> Used to give an ordered, patterned feel, such as on clothing. It utilizes an organized pattern that applies different thresholds to each pixel.</li>
+                            <li><strong className="text-gruv-purple">Blue Noise:</strong> Used when natural randomness is required, such as light reflected on a wall. It employs a technique called 'void and cull' to eliminate the clumping of bright or dark dots that occurs in simple random patterns (white noise), creating a much more visually pleasing effect.</li>
+                        </ul>
+
+                        <h4 className="text-lg font-bold text-gruv-orange mt-4">4. Dithering Stabilization in 3D Environments: An Ingenious Solution</h4>
+                        <p>Because classic dithering techniques were designed for static images, serious issues arose where patterns would shake or distort in a 3D environment with a moving camera. Lucas Pope attempted several approaches to solve this.</p>
+                        <p><strong className="text-gruv-green">Initial Attempts (Failed):</strong></p>
+                        <ul className="list-disc pl-5 space-y-1 marker:text-gruv-gray">
+                            <li><strong className="text-gruv-red">Fixed Pattern:</strong> Applying the dithering pattern directly to the object. While the pattern stabilized, it looked visually unnatural, as if the object did not fully blend with the scene.</li>
+                            <li><strong className="text-gruv-red">Using Previous Frames:</strong> Allowing dithering information from the previous frame to influence the next. While there was improvement, visual breaking and distortion of the pattern still occurred.</li>
+                        </ul>
+                        <p><strong className="text-gruv-green">Final Solution (Success):</strong></p>
+                        <ul className="list-disc pl-5 space-y-1 marker:text-gruv-gray">
+                            <li><strong className="text-gruv-green">Camera-Centric Sphere Mapping:</strong> This approach involves imagining a virtual sphere around the camera, mapping the dithering pattern onto that sphere, and then using it to render the entire scene. This created a very stable dithering effect regardless of how the camera moved.</li>
+                        </ul>
+                        <p><strong className="text-gruv-green">Value of the Effort:</strong> Pope invested over 100 hours to solve this problem. Regarding this effort, it is noted:</p>
+                        <p>"Without this work, players would have experienced severe motion sickness, and the enjoyment of the game would have been greatly diminished."</p>
+
+                        <h4 className="text-lg font-bold text-gruv-orange mt-4">5. The Power of Open Development and Collaboration</h4>
+                        <p>Lucas Pope's public sharing of his development process played a crucial role in enhancing the game's quality.</p>
+                        <p><strong className="text-gruv-green">Feedback and Collaboration:</strong> As Pope shared his progress on the Tigsource forums, he received feedback from others. Notably, Brent Werness, a mathematician at the University of Chicago, invented and proposed a new dithering approach that was far superior to existing methods.</p>
+                        <p><strong className="text-gruv-green">Technical Advancement:</strong> Pope ultimately adopted Werness's algorithm for the game. This technology significantly improved face recognition rates, which is critical for identifying characters based on clues—a core element of the game.</p>
+
+                        <h4 className="text-lg font-bold text-gruv-orange mt-4">6. The Developer's Vision and Persistence</h4>
+                        <p>The case of Lucas Pope demonstrates that even without being a specialist in a specific field, one can achieve innovative results with a clear vision and persistence.</p>
+                        <p><strong className="text-gruv-green">Vision-Centric Development:</strong> He did not start the project as a dithering expert. Instead, he had a clear vision of what he wanted to achieve and showed the tenacity to try various approaches until it worked.</p>
+                        <p><strong className="text-gruv-green">Inspiration:</strong> His attitude of not stopping his efforts and trials, even without knowing what the final solution would be, inspires the idea that we can create something completely new and better that has never existed before.</p>
                     </div>
-                </Pane>
+                </div>
+
+                {/* Privacy Policy Section */}
+                <div className="w-full max-w-4xl px-4 py-8 my-8 bg-gruv-surface border border-gruv-border shadow-lg">
+                    <h2 className="text-3xl font-bold text-gruv-yellow mb-6 border-b border-gruv-border pb-2">Privacy Policy</h2>
+                    <div className="text-sm text-gruv-text font-mono leading-relaxed space-y-4">
+                        <h3 className="text-lg font-bold text-gruv-aqua mt-6">1. Data Processing and Collection</h3>
+                        <p>The 'Obradinn Dithering Engine' is a client-side web application. We do not collect, store, or share any personal information or images uploaded by users. All image processing is performed locally within your web browser using JavaScript and WebGL. Your images are never uploaded to our servers.</p>
+
+                        <h3 className="text-lg font-bold text-gruv-aqua mt-6">2. Cookies and Google AdSense</h3>
+                        <p>This website uses cookies to analyze traffic and serve advertisements.</p>
+                        <p><strong className="text-gruv-green">Google AdSense:</strong> As a third-party vendor, Google uses cookies to serve ads based on a user's prior visits to this website or other websites.</p>
+                        <p>Google's use of advertising cookies enables it and its partners to serve ads to users based on their visit to this site and/or other sites on the Internet.</p>
+                        <p>Users may opt out of personalized advertising by visiting Google Ad Settings.</p>
+
+                        <h3 className="text-lg font-bold text-gruv-aqua mt-6">3. Third-Party Data Disclosure</h3>
+                        <p>Since we do not collect any personal data, we do not provide, sell, or trade any user information to third parties.</p>
+
+                        <h3 className="text-lg font-bold text-gruv-aqua mt-6">4. Data Security</h3>
+                        <p>Because all processing happens on your local device, your original images remain private and secure on your own hardware.</p>
+
+                        <h3 className="text-lg font-bold text-gruv-aqua mt-6">5. Contact Information</h3>
+                        <p>If you have any questions regarding this Privacy Policy or the technical aspects of this tool, please contact us at:</p>
+                        <p><strong className="text-gruv-green">Email:</strong> [qmemp @gmail.com)]</p>
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -195,7 +288,7 @@ const DocsPage = ({ onBack }) => {
                     </span>
                     <span className="text-gruv-gray text-xs hidden md:inline-block">man dithering</span>
                 </div>
-                 <TerminalButton onClick={onBack} variant="accent" className="w-auto py-1 px-4">
+                <TerminalButton onClick={onBack} variant="accent" className="w-auto py-1 px-4">
                     <LogOut size={14} /> Back to Lab
                 </TerminalButton>
             </header>
@@ -245,7 +338,7 @@ const DitheringApp = ({ onNavigate }) => {
                 setter(null);
             };
         };
-        
+
         let isInitialLoad = source === null;
         if (isInitialLoad) {
             loadImage('images/default_image.png', setSource);
@@ -280,7 +373,7 @@ const DitheringApp = ({ onNavigate }) => {
         };
 
     }, [source, isPlaying, algorithm, blendMode, brightness, contrast, pixelSize, edgeStrength, textureIntensity, textureInvert, oklchDark, oklchMid, oklchLight, texture]);
-    
+
 
     const bayerMatrix = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]].map(row => row.map(v => (v / 16) * 255));
     const blueNoiseMatrix = [
@@ -493,8 +586,8 @@ const DitheringApp = ({ onNavigate }) => {
                     <span className="text-gruv-gray text-xs hidden md:inline-block">./init_dithering_engine.sh</span>
                 </div>
                 <div className="flex items-center gap-4 text-xs font-mono">
-                     <button onClick={() => onNavigate('docs')} className="text-gruv-purple hover:text-gruv-text transition-colors flex items-center gap-1">
-                        <Book size={14}/> <span className="underline">Docs</span>
+                    <button onClick={() => onNavigate('docs')} className="text-gruv-purple hover:text-gruv-text transition-colors flex items-center gap-1">
+                        <Book size={14} /> <span className="underline">Docs</span>
                     </button>
                     <span className="text-gruv-blue flex items-center gap-1">
                         <span className="w-2 h-2 rounded-full bg-gruv-blue animate-pulse"></span> ONLINE
@@ -586,7 +679,7 @@ const DitheringApp = ({ onNavigate }) => {
                                 </div>
                             </button>
                             <button disabled={!source} onClick={handleRawExport} className="w-full py-2 border border-gruv-border text-gruv-gray text-[10px] font-bold hover:bg-gruv-border hover:text-gruv-bg transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
-                                    <FileOutput size={12} /> EXPORT_RAW_DATA
+                                <FileOutput size={12} /> EXPORT_RAW_DATA
                             </button>
                         </div>
                     </div>
@@ -626,7 +719,7 @@ const DitheringApp = ({ onNavigate }) => {
 
             {/* AdSense Placeholder */}
             <div className="h-16 bg-gruv-surface border border-gruv-border flex items-center justify-center text-gruv-gray text-xs">
-                [ Google AdSense Placeholder ]
+
             </div>
 
             {/* Modal Info */}
@@ -709,7 +802,7 @@ const HelpModal = ({ onClose }) => {
                     {activeTab === 'howToUse' && <pre className="whitespace-pre-wrap font-mono">{howToUse}</pre>}
                     {activeTab === 'fairUse' && <pre className="whitespace-pre-wrap font-mono">{fairUse}</pre>}
                 </div>
-                 <div className="p-3 border-t border-gruv-border text-center text-xs text-gruv-gray">
+                <div className="p-3 border-t border-gruv-border text-center text-xs text-gruv-gray">
                     Press 'ESC' or click outside to close buffer.
                 </div>
             </div>
