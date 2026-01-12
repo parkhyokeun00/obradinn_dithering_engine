@@ -342,7 +342,6 @@ const DitheringApp = ({ onNavigate }) => {
         let isInitialLoad = source === null;
         if (isInitialLoad) {
             loadImage('images/default_image.png', setSource);
-            loadImage('images/default_texture.png', setTexture);
         }
 
     }, [source]);
@@ -534,6 +533,10 @@ const DitheringApp = ({ onNavigate }) => {
         }
     };
 
+    const handleTextureReset = () => {
+        setTexture(null);
+    };
+
     const setObraDinnMode = () => {
         setAlgorithm('blue-noise');
         setPixelSize(2);
@@ -610,7 +613,12 @@ const DitheringApp = ({ onNavigate }) => {
                             <div className="text-xs font-bold text-gruv-gray uppercase tracking-widest mb-1 border-b border-gruv-border/30 pb-1">Sources</div>
                             <div className="space-y-2">
                                 <AssetUploader label="SOURCE (IMG/MOV)" icon={<Video size={14} />} active={!!source} onClick={() => fileInputRef.current.click()} />
-                                <AssetUploader label="TEXTURE" icon={<Layers size={14} />} active={!!texture} onClick={() => textureInputRef.current.click()} />
+                                <div className="flex items-center gap-1">
+                                    <AssetUploader label="TEXTURE" icon={<Layers size={14} />} active={!!texture} onClick={() => textureInputRef.current.click()} />
+                                    <button onClick={handleTextureReset} title="Reset Texture" disabled={!texture} className="p-2 border border-gruv-border text-gruv-gray hover:bg-gruv-red hover:text-gruv-bg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                    </button>
+                                </div>
                                 <input type="file" ref={fileInputRef} onChange={handleFileUpload} className="hidden" accept="image/*,video/*" />
                                 <input type="file" ref={textureInputRef} onChange={handleTextureUpload} className="hidden" accept="image/*" />
 
