@@ -517,7 +517,12 @@ const DitheringApp = ({ onNavigate }) => {
             img.src = url;
             img.onload = () => {
                 setSource({ type: 'image', element: img });
-                setIsPlaying(false);
+                // Only stop playing if we don't have a video texture
+                if (texture && texture.type === 'video') {
+                    setIsPlaying(true);
+                } else {
+                    setIsPlaying(false);
+                }
             };
         }
     };
