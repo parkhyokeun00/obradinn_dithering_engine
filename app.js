@@ -260,7 +260,7 @@ const IntroScreen = ({ onEnter }) => {
 
                         <h3 className="text-lg font-bold text-gruv-aqua mt-6">5. Contact Information</h3>
                         <p>If you have any questions regarding this Privacy Policy or the technical aspects of this tool, please contact us at:</p>
-                        <p><strong className="text-gruv-green">Email:</strong> [qmemp @gmail.com)]</p>
+                        <p><strong className="text-gruv-green">Email:</strong> []</p>
                     </div>
                 </div>
             </div>
@@ -353,13 +353,13 @@ const DitheringApp = ({ onNavigate }) => {
 
     useEffect(() => {
         const animate = () => {
-            if (source?.type === 'video' && isPlaying) {
+            if ((source?.type === 'video' || texture?.type === 'video') && isPlaying) {
                 processFrame();
                 requestRef.current = requestAnimationFrame(animate);
             }
         };
 
-        if (source?.type === 'video' && isPlaying) {
+        if ((source?.type === 'video' || texture?.type === 'video') && isPlaying) {
             requestRef.current = requestAnimationFrame(animate);
         } else if (source) {
             processFrame();
@@ -524,9 +524,25 @@ const DitheringApp = ({ onNavigate }) => {
 
     const handleTextureUpload = (e) => {
         const file = e.target.files[0];
-        if (file) {
+        if (!file) return;
+        const url = URL.createObjectURL(file);
+
+        if (file.type.startsWith('video/')) {
+            const video = document.createElement('video');
+            video.src = url;
+            video.loop = true;
+            video.muted = true;
+            video.onloadedmetadata = () => {
+                setTexture({ type: 'video', element: video });
+                video.play();
+                // If main source isn't a video, we need to ensure the loop runs
+                if (source && source.type !== 'video') {
+                    setIsPlaying(true);
+                }
+            };
+        } else {
             const img = new Image();
-            img.src = URL.createObjectURL(file);
+            img.src = url;
             img.onload = () => {
                 setTexture({ type: 'image', element: img });
             };
@@ -620,7 +636,7 @@ const DitheringApp = ({ onNavigate }) => {
                                     </button>
                                 </div>
                                 <input type="file" ref={fileInputRef} onChange={handleFileUpload} className="hidden" accept="image/*,video/*" />
-                                <input type="file" ref={textureInputRef} onChange={handleTextureUpload} className="hidden" accept="image/*" />
+                                <input type="file" ref={textureInputRef} onChange={handleTextureUpload} className="hidden" accept="image/*,video/*" />
 
                                 {source?.type === 'video' && (
                                     <TerminalButton onClick={() => { setIsPlaying(!isPlaying); isPlaying ? source.element.pause() : source.element.play(); }} variant="accent">
